@@ -227,7 +227,7 @@ namespace alps {
             typedef std::vector<T> VT;
             VT operator()(VT v)
             {
-                transform(v.begin(),v.end(),v.begin(),negate<T>());
+                std::transform(v.begin(),v.end(),v.begin(),negate<T>());
                 return v;
             }
         };
@@ -244,7 +244,7 @@ namespace alps {
             typedef std::vector<T> VT;
             VT operator()(VT v)
             {
-                transform(v.begin(),v.end(),v.begin(),invert<T>());
+                std::transform(v.begin(),v.end(),v.begin(),invert<T>());
                 return v;
             }
         };
