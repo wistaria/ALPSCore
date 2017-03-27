@@ -68,7 +68,7 @@ namespace alps {
     namespace accumulators {
         // this should be called namespace tag { struct binning_analysis; }
         // but gcc <= 4.4 has lookup error, so name it different
-        struct binning_analysis_tag;
+        struct binning_analysis_tag {};
 
         template<typename T> struct autocorrelation_type
             : public boost::mpl::if_<boost::is_integral<typename value_type<T>::type>, double, typename value_type<T>::type>

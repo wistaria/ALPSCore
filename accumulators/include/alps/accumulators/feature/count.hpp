@@ -25,7 +25,7 @@ namespace alps {
     namespace accumulators {
         // this should be called namespace tag { struct count; }
         // but gcc <= 4.4 has lookup error, so name it different
-        struct count_tag;
+        struct count_tag {};
 
         template<typename T> struct count_type {
             typedef boost::uint64_t type;

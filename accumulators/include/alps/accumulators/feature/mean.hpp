@@ -33,7 +33,7 @@ namespace alps {
     namespace accumulators {
         // this should be called namespace tag { struct mean; }
         // but gcc <= 4.4 has lookup error, so name it different
-        struct mean_tag;
+        struct mean_tag {};
 
         template<typename T> struct mean_type
             : public boost::mpl::if_<boost::is_integral<typename value_type<T>::type>, double, typename value_type<T>::type>
