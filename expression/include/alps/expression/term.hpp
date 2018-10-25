@@ -30,13 +30,13 @@ public:
   term(const std::pair<T,term<T> >&);
   virtual ~term() {}
 
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  value_type value(const evaluator<T>& =evaluator<T>()) const;
 
-  bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  bool can_evaluate(const evaluator<T>& =evaluator<T>()) const;
   void output(std::ostream&) const;
   evaluatable<T>* clone() const { return new term<T>(*this); }
   bool is_negative() const { return is_negative_;}
-  void partial_evaluate(const evaluator<T>& =evaluator<T>(), bool=false);
+  void partial_evaluate(const evaluator<T>& =evaluator<T>());
   std::pair<T,term<T> > split() const;
   
   const term& operator*=(const factor<T>& v) {
@@ -149,30 +149,30 @@ term<T>::term(std::istream& in, bool negate) : is_negative_(negate) {
 }
 
 template<class T>
-typename term<T>::value_type term<T>::value(const evaluator<T>& p, bool isarg) const {
+typename term<T>::value_type term<T>::value(const evaluator<T>& p) const {
   value_type val(1.);
   for (unsigned int i = 0; i < terms_.size() && (!numeric::is_zero(val)); ++i)
-    val *= terms_[i].value(p,isarg);
+    val *= terms_[i].value(p);
   if (is_negative() && (!numeric::is_zero(val)))
     val = val*(-1.);
   return val;
 }
 
 template<class T>
-void term<T>::partial_evaluate(const evaluator<T>& p, bool isarg) {
-  if (can_evaluate(p,isarg)) {
-    (*this) = term<T>(value(p,isarg));
+void term<T>::partial_evaluate(const evaluator<T>& p) {
+  if (can_evaluate(p)) {
+    (*this) = term<T>(value(p));
   } else {
     value_type val(1);
     for (unsigned int i=0; i<terms_.size(); ++i) {
-      if (terms_[i].can_evaluate(p,isarg)) {
-        val *= terms_[i].value(p,isarg);
+      if (terms_[i].can_evaluate(p)) {
+        val *= terms_[i].value(p);
         if (numeric::is_zero(val))
           break;
         terms_.erase(terms_.begin()+i);
         --i;
       } else {
-        terms_[i].partial_evaluate(p,isarg);
+        terms_[i].partial_evaluate(p);
       }
     }
     if (numeric::is_zero(val))
@@ -190,10 +190,10 @@ void term<T>::partial_evaluate(const evaluator<T>& p, bool isarg) {
 }
 
 template<class T>
-bool term<T>::can_evaluate(const evaluator<T>& p, bool isarg) const {
-  bool can=true;
+bool term<T>::can_evaluate(const evaluator<T>& p) const {
+  bool can = true;
   for (unsigned int i=0;i<terms_.size();++i)
-    can = can && terms_[i].can_evaluate(p,isarg);
+    can = can && terms_[i].can_evaluate(p);
   return can;
 }
 

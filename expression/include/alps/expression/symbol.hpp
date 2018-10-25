@@ -19,12 +19,13 @@ public:
   typedef T value_type;
 
   symbol(const std::string& n) : name_(n) {}
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
-  bool can_evaluate(const evaluator<T>& ev=evaluator<T>(), bool isarg=false) const
-  { return ev.can_evaluate(name_,isarg);}
+  value_type value(const evaluator<T>& = evaluator<T>()) const;
+  bool can_evaluate(const evaluator<T>& ev = evaluator<T>()) const {
+    return ev.can_evaluate(name_);
+  }
   void output(std::ostream& os) const { os << name_; }
   evaluatable<T>* clone() const { return new symbol<T>(*this); }
-  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>(), bool=false);
+  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>());
   bool depends_on(const std::string& s) const;
 private:
   std::string name_;
@@ -36,19 +37,19 @@ bool symbol<T>::depends_on(const std::string& s) const {
 }
 
 template<class T>
-typename symbol<T>::value_type symbol<T>::value(const evaluator<T>& eval, bool isarg) const {
-  if (!eval.can_evaluate(name_,isarg))
+typename symbol<T>::value_type symbol<T>::value(const evaluator<T>& eval) const {
+  if (!eval.can_evaluate(name_))
     boost::throw_exception(std::runtime_error("Cannot evaluate " + name_ ));
-  return eval.evaluate(name_,isarg);
+  return eval.evaluate(name_);
 }
 
 template<class T>
-evaluatable<T>* symbol<T>::partial_evaluate_replace(const evaluator<T>& p, bool isarg) {
-  expression<T> e(p.partial_evaluate(name_,isarg));
-  if (e==name_)
+evaluatable<T>* symbol<T>::partial_evaluate_replace(const evaluator<T>& p) {
+  expression<T> e(p.partial_evaluate(name_));
+  if (e == name_)
     return this;
   else
-    return new block<T>(p.partial_evaluate(name_,isarg));
+    return new block<T>(p.partial_evaluate(name_));
 }
 
 } // end namespace expression

@@ -21,11 +21,11 @@ public:
   function(std::istream&, const std::string&);
   function(const std::string& n, const expression<T>& e) : name_(n), args_(1,e) {}
   function(const std::string& n, const std::vector<expression<T> >& e) : name_(n), args_(e) {}
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
-  bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  value_type value(const evaluator<T>& =evaluator<T>()) const;
+  bool can_evaluate(const evaluator<T>& =evaluator<T>()) const;
   void output(std::ostream&) const;
   evaluatable<T>* clone() const { return new function<T>(*this); }
-  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>(), bool=false);
+  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>());
   bool depends_on(const std::string& s) const;
 private:
  std::string name_;
@@ -61,23 +61,20 @@ bool function<T>::depends_on(const std::string& s) const {
 }
 
 template<class T>
-evaluatable<T>* function<T>::partial_evaluate_replace(const evaluator<T>& p, bool isarg)
-{
-  p.partial_evaluate_expressions(args_,true);
-  return new block<T>(p.partial_evaluate_function(name_,args_,isarg));
+evaluatable<T>* function<T>::partial_evaluate_replace(const evaluator<T>& p) {
+  p.partial_evaluate_expressions(args_);
+  return new block<T>(p.partial_evaluate_function(name_, args_));
 }
 
 template<class T>
-typename function<T>::value_type function<T>::value(const evaluator<T>& p, bool isarg) const
-{
-  value_type val=p.evaluate_function(name_,args_,isarg);
+typename function<T>::value_type function<T>::value(const evaluator<T>& p) const {
+  value_type val=p.evaluate_function(name_,args_);
   return val;
 }
 
 template<class T>
-bool function<T>::can_evaluate(const evaluator<T>& p, bool isarg) const
-{
-  return p.can_evaluate_function(name_,args_,isarg);
+bool function<T>::can_evaluate(const evaluator<T>& p) const {
+  return p.can_evaluate_function(name_, args_);
 }
 
 template<class T>

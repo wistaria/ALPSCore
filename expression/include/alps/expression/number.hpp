@@ -22,8 +22,8 @@ public:
   typedef typename alps::numeric::real_type<T>::type real_type;
 
   number(typename boost::call_traits<value_type>::param_type x) : val_(x) {}
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
-  bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const { return true; }
+  value_type value(const evaluator<T>& =evaluator<T>()) const;
+  bool can_evaluate(const evaluator<T>& =evaluator<T>()) const { return true; }
   void output(std::ostream&) const;
   evaluatable<T>* clone() const { return new number<T>(*this); }
 private:
@@ -31,7 +31,7 @@ private:
 };
 
 template<class T>
-typename number<T>::value_type number<T>::value(const evaluator<T>&, bool) const {
+typename number<T>::value_type number<T>::value(const evaluator<T>&) const {
   return val_;
 }
 

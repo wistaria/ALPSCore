@@ -40,11 +40,11 @@ public:
 
   const simple_factor& operator=(const simple_factor& v);
 
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  value_type value(const evaluator<T>& =evaluator<T>()) const;
   void output(std::ostream&) const;
-  bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  bool can_evaluate(const evaluator<T>& =evaluator<T>()) const;
   evaluatable<T>* clone() const { return new simple_factor<T>(*this); }
-  void partial_evaluate(const evaluator<T>& =evaluator<T>(), bool=false);
+  void partial_evaluate(const evaluator<T>& =evaluator<T>());
   bool is_single_term() const { return term_ ? term_->is_single_term() : false; }
   term<T> get_term() const { return term_ ? term_->get_term() : term<T>(); }
   bool depends_on(const std::string& s) const
@@ -69,12 +69,12 @@ public:
   factor(const evaluatable<T>& v) : super_type(v), is_inverse_(false), power_(1.) {}
   factor(const super_type& v) : super_type(v), is_inverse_(false), power_(1.) {}
   virtual ~factor() {}
-  value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  value_type value(const evaluator<T>& =evaluator<T>()) const;
   void output(std::ostream&) const;
-  bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const;
+  bool can_evaluate(const evaluator<T>& =evaluator<T>()) const;
   evaluatable<T>* clone() const { return new factor<T>(*this); }
   bool is_inverse() const { return is_inverse_; }
-  void partial_evaluate(const evaluator<T>& =evaluator<T>(), bool=false);
+  void partial_evaluate(const evaluator<T>& =evaluator<T>());
   term<T> get_term() const { return unit_power() ? super_type::get_term() : (super_type::term_ ? term<T>(*this) : term<T>()); }
   bool depends_on(const std::string& s) const
   {
@@ -139,17 +139,17 @@ factor<T>::factor(std::istream& in, bool inv) : super_type(in), is_inverse_(inv)
 }
 
 template<class T>
-void simple_factor<T>::partial_evaluate(const evaluator<T>& p, bool isarg) {
+void simple_factor<T>::partial_evaluate(const evaluator<T>& p) {
   if (!term_)
     boost::throw_exception(std::runtime_error("Empty value in expression"));
-  evaluatable<T>* e=term_->partial_evaluate_replace(p,isarg);
+  evaluatable<T>* e=term_->partial_evaluate_replace(p);
   if(e!=term_.get()) term_.reset(e);
 }
 
 template<class T>
-void factor<T>::partial_evaluate(const evaluator<T>& p,bool isarg) {
-  super_type::partial_evaluate(p,isarg);
-  power_.partial_evaluate(p,isarg);
+void factor<T>::partial_evaluate(const evaluator<T>& p) {
+  super_type::partial_evaluate(p);
+  power_.partial_evaluate(p);
 }
 
 template<class T>
@@ -162,31 +162,31 @@ const simple_factor<T>& simple_factor<T>::operator=(const simple_factor<T>& v) {
 }
 
 template<class T>
-bool simple_factor<T>::can_evaluate(const evaluator<T>& p, bool isarg) const {
+bool simple_factor<T>::can_evaluate(const evaluator<T>& p) const {
   if (!term_)
     boost::throw_exception(std::runtime_error("Empty value in expression"));
-  return term_->can_evaluate(p,isarg);
+  return term_->can_evaluate(p);
 }
 
 template<class T>
-bool factor<T>::can_evaluate(const evaluator<T>& p, bool isarg) const {
-  return super_type::can_evaluate(p,unit_power() ? isarg : true) && power_.can_evaluate(p,true);
+bool factor<T>::can_evaluate(const evaluator<T>& p) const {
+  return super_type::can_evaluate(p) && power_.can_evaluate(p);
 }
 
 template <class T>
-typename simple_factor<T>::value_type simple_factor<T>::value(const evaluator<T>& p, bool isarg) const {
+typename simple_factor<T>::value_type simple_factor<T>::value(const evaluator<T>& p) const {
   if (!term_)
     boost::throw_exception(std::runtime_error("Empty value in expression"));
-  return term_->value(p,isarg);
+  return term_->value(p);
 }
 
 template <class T>
-typename factor<T>::value_type factor<T>::value(const evaluator<T>& p, bool isarg) const {
-  value_type val = super_type::value(p,unit_power() ? isarg : true);
+typename factor<T>::value_type factor<T>::value(const evaluator<T>& p) const {
+  value_type val = super_type::value(p);
   if (is_inverse())
     val = 1./val;
   if (!unit_power())
-    val = std::pow(evaluate_helper<T>::real(val),evaluate_helper<T>::real(power_.value(p,true)));
+    val = std::pow(evaluate_helper<T>::real(val),evaluate_helper<T>::real(power_.value(p)));
   return val;
 }
 

@@ -19,119 +19,121 @@ template<class T>
 class evaluator {
 public:
   typedef T value_type;
-  evaluator() {}
-  virtual ~evaluator() {}
+  evaluator(const params& p = params()) : parms_(p) {}
+  ~evaluator() {}
 
-  virtual bool can_evaluate(const std::string&, bool=false) const;
-  virtual bool can_evaluate_function(const std::string&, const expression<T>&, bool=false) const;
-  virtual bool can_evaluate_function(const std::string&, const std::vector<expression<T> >&, bool=false) const;
-  virtual value_type evaluate(const std::string&, bool=false) const;
-  virtual value_type evaluate_function(const std::string&, const expression<T>&, bool=false) const;
-  virtual value_type evaluate_function(const std::string&, const std::vector<expression<T> >&, bool=false) const;
-  virtual expression<T> partial_evaluate(const std::string& name, bool=false) const;
-  virtual expression<T> partial_evaluate_function(const std::string& name, const expression<T>&, bool=false) const;
-  virtual expression<T> partial_evaluate_function(const std::string& name, const std::vector<expression<T> >&, bool=false) const;
-  bool can_evaluate_expressions(const std::vector<expression<T> >&, bool=false) const;
-  void partial_evaluate_expressions(std::vector<expression<T> >&, bool=false) const;
-};
-
-
-template<class T>
-class params_evaluator : public evaluator<T> {
-public:
-  typedef evaluator<T> super_type;
-  typedef T value_type;
-  params_evaluator(const params& p) 
-  : evaluator<T>(), parms_(p) {}
-  virtual ~params_evaluator() {}
-
-  bool can_evaluate(const std::string&, bool=false) const;
-  value_type evaluate(const std::string&, bool=false) const;
-  expression<T> partial_evaluate(const std::string& name, bool=false) const;
+  bool can_evaluate(const std::string&) const;
+  bool can_evaluate_function(const std::string&, const expression<T>&) const;
+  bool can_evaluate_function(const std::string&, const std::vector<expression<T> >&) const;
+  value_type evaluate(const std::string&) const;
+  value_type evaluate_function(const std::string&, const expression<T>&) const;
+  value_type evaluate_function(const std::string&, const std::vector<expression<T> >&) const;
+  expression<T> partial_evaluate(const std::string& name) const;
+  expression<T> partial_evaluate_function(const std::string& name, const expression<T>&) const;
+  expression<T> partial_evaluate_function(const std::string& name, const std::vector<expression<T> >&) const;
+  bool can_evaluate_expressions(const std::vector<expression<T> >&) const;
+  void partial_evaluate_expressions(std::vector<expression<T> >&) const;
   const params& parameters() const { return parms_;}
 private:
   params parms_;
 };
 
 template<class T>
-bool evaluator<T>::can_evaluate(const std::string& name, bool isarg) const {
-  return evaluate_helper<T>::can_evaluate_symbol(name, isarg);
+bool evaluator<T>::can_evaluate(const std::string& name) const {
+  if (evaluate_helper<T>::can_evaluate_symbol(name)) return true;
+  if (!parms_.defined(name) || (parms_[name].isType<std::string>() && parms_[name] == "Infinite recursion check"))
+    return false;
+  if (parms_[name].isType<std::string>()) {
+    params p(parms_);
+    p[name] = "Infinite recursion check"; // set illegal to avoid infinite recursion
+    bool can = expression<T>(parms_[name].as<std::string>()).can_evaluate(evaluator<T>(p));
+    return can;
+  } else {
+    return true;
+  }
 }
 
 template<class T>
-bool evaluator<T>::can_evaluate_function(const std::string& name, const expression<T>& arg, bool) const
-{
-  return arg.can_evaluate(*this,true) &&
+bool evaluator<T>::can_evaluate_function(const std::string& name, const expression<T>& arg) const {
+  return arg.can_evaluate(*this) &&
          (name=="sqrt" || name=="abs" ||
           name=="sin" || name=="cos" || name=="tan" ||
           name=="asin" || name=="acos" || name=="atan" ||
           name=="log" || name=="exp");
 }
 
-
 template<class T>
-bool evaluator<T>::can_evaluate_expressions(const std::vector<expression<T> >& arg, bool f) const
-{
+bool evaluator<T>::can_evaluate_expressions(const std::vector<expression<T> >& arg) const {
   bool can=true;
-  for (typename std::vector<expression<T> >::const_iterator it=arg.begin();it!=arg.end();++it)
-    can = can && it->can_evaluate(*this,f);
+  for (typename std::vector<expression<T> >::const_iterator it = arg.begin(); it != arg.end(); ++it)
+    can = can && it->can_evaluate(*this);
   return can;
 }
 
 template<class T>
-void evaluator<T>::partial_evaluate_expressions(std::vector<expression<T> >& arg, bool f) const
-{
-  for (typename std::vector<expression<T> >::iterator it=arg.begin();it!=arg.end();++it) {
-   it->partial_evaluate(*this,f);
-   // it->simplify();
+void evaluator<T>::partial_evaluate_expressions(std::vector<expression<T> >& arg) const {
+  for (typename std::vector<expression<T> >::iterator it = arg.begin(); it != arg.end(); ++it) {
+   it->partial_evaluate(*this);
   }
 }
 
-
 template<class T>
-bool evaluator<T>::can_evaluate_function(const std::string& name, const std::vector<expression<T> >& arg, bool f) const
-{
-  bool can = can_evaluate_expressions(arg, true) &&
-    (arg.size() == 1 && can_evaluate_function(name,arg[0], f));
+bool evaluator<T>::can_evaluate_function(const std::string& name, const std::vector<expression<T> >& arg) const {
+  bool can = can_evaluate_expressions(arg) &&
+    (arg.size() == 1 && can_evaluate_function(name, arg[0]));
   return can;
 }
 
 template<class T>
-typename evaluator<T>::value_type evaluator<T>::evaluate(const std::string& name,bool isarg) const
-{
-  if (evaluate_helper<T>::can_evaluate_symbol(name, isarg))
-    return evaluate_helper<T>::evaluate_symbol(name, isarg);
-  return partial_evaluate(name, isarg).value();
+typename evaluator<T>::value_type evaluator<T>::evaluate(const std::string& name) const {
+  if (evaluate_helper<T>::can_evaluate_symbol(name))
+    return evaluate_helper<T>::evaluate_symbol(name);
+  if (parms_[name].isType<std::string>() && parms_[name] == "Infinite recursion check")
+    boost::throw_exception(std::runtime_error("Infinite recursion when evaluating " + name));
+  if (parms_[name].isType<std::string>()) {
+    params p(parms_);
+    p[name] = "Infinite recursion check";
+    return evaluate_helper<T>::value(expression<T>(parms_[name]), evaluator<T>(p));
+  } else {
+    return value_type(parms_[name]);
+  }
 }
 
 template<class T>
-typename evaluator<T>::value_type evaluator<T>::evaluate_function(const std::string& name, const expression<T>& arg,bool isarg) const
-{
-  return partial_evaluate_function(name,arg,isarg).value();
+typename evaluator<T>::value_type evaluator<T>::evaluate_function(const std::string& name, const expression<T>& arg) const {
+  return partial_evaluate_function(name,arg).value();
 }
 
 template<class T>
-typename evaluator<T>::value_type evaluator<T>::evaluate_function(const std::string& name, const std::vector<expression<T> >& arg,bool isarg) const
-{
-  return partial_evaluate_function(name,arg,isarg).value();
+typename evaluator<T>::value_type evaluator<T>::evaluate_function(const std::string& name, const std::vector<expression<T> >& arg) const {
+  return partial_evaluate_function(name, arg).value();
 }
 
 template<class T>
-expression<T> evaluator<T>::partial_evaluate(const std::string& name,bool) const
-{
-  return expression<T>(name);
+expression<T> evaluator<T>::partial_evaluate(const std::string& name) const {
+  expression<T> e;
+  if (can_evaluate(name)) {
+    e = expression<T>(evaluate(name));
+  } else if(!parms_.defined(name)) {
+    e=expression<T>(name);
+  } else {
+    params p(parms_);
+    p[name] = "";
+    e = expression<T>(parms_[name]);
+    e.partial_evaluate(evaluator<T>(p));
+  }
+  return e;
 }
 
 
 template<class T>
-expression<T> evaluator<T>::partial_evaluate_function(const std::string& name, const expression<T>& arg,bool) const
-{
-  if(!arg.can_evaluate(*this,true)) {
+expression<T> evaluator<T>::partial_evaluate_function(const std::string& name, const expression<T>& arg) const {
+  if(!arg.can_evaluate(*this)) {
     expression<T> e(arg);
-    e.partial_evaluate(*this,true);
+    e.partial_evaluate(*this);
     return expression<T>(function<T>(name,e));
   }
-  value_type val=arg.value(*this,true);
+  value_type val=arg.value(*this);
   if (name=="sqrt")
     val = std::sqrt(val);
   else if (name=="abs")
@@ -158,17 +160,16 @@ expression<T> evaluator<T>::partial_evaluate_function(const std::string& name, c
 }
 
 template<class T>
-expression<T> evaluator<T>::partial_evaluate_function(const std::string& name, const std::vector<expression<T> >& args,bool isarg) const
-{
+expression<T> evaluator<T>::partial_evaluate_function(const std::string& name, const std::vector<expression<T> >& args) const {
   if (args.size()==1)
-    return partial_evaluate_function(name,args[0],isarg);
+    return partial_evaluate_function(name,args[0]);
     
   std::vector<expression<T> > evaluated;
   bool could_evaluate = true;
   for (typename std::vector<expression<T> >::const_iterator it = args.begin(); it !=args.end();++it) {
     evaluated.push_back(*it);
-    could_evaluate = could_evaluate && it->can_evaluate(*this,true);
-    evaluated.rbegin()->partial_evaluate(*this,true);
+    could_evaluate = could_evaluate && it->can_evaluate(*this);
+    evaluated.rbegin()->partial_evaluate(*this);
   }
   if (evaluated.size()==2 && could_evaluate) {
     double arg1=evaluate_helper<T>::real(evaluated[0].value());

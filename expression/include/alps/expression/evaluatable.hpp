@@ -20,11 +20,11 @@ public:
 
   evaluatable() {}
   virtual ~evaluatable() {}
-  virtual value_type value(const evaluator<T>& =evaluator<T>(), bool=false) const = 0;
-  virtual bool can_evaluate(const evaluator<T>& =evaluator<T>(), bool=false) const = 0;
+  virtual value_type value(const evaluator<T>& =evaluator<T>()) const = 0;
+  virtual bool can_evaluate(const evaluator<T>& =evaluator<T>()) const = 0;
   virtual void output(std::ostream&) const = 0;
   virtual evaluatable* clone() const = 0;
-  virtual evaluatable* partial_evaluate_replace(const evaluator<T>& =evaluator<T>(),bool=false) { return this; }
+  virtual evaluatable* partial_evaluate_replace(const evaluator<T>& =evaluator<T>()) { return this; }
   virtual bool is_single_term() const { return false; }
   virtual term<T> get_term() const;
   virtual bool depends_on(const std::string&) const { return false; }

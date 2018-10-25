@@ -16,15 +16,14 @@ namespace expression {
 
 template<class T>
 class block : public expression<T> {
-private:
-  typedef expression<T> BASE_;
-
 public:
   block(std::istream&);
   block(const expression<T>& e) : BASE_(e) {}
   void output(std::ostream&) const;
   evaluatable<T>* clone() const { return new block<T>(*this); }
-  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>(),bool=false);
+  evaluatable<T>* partial_evaluate_replace(const evaluator<T>& =evaluator<T>());
+private:
+  typedef expression<T> BASE_;
 };
 
 //
@@ -32,8 +31,7 @@ public:
 //
 
 template<class T>
-block<T>::block(std::istream& in) : expression<T>(in)
-{
+block<T>::block(std::istream& in) : expression<T>(in) {
   char c;
   in >> c;
   if (c != ')' && c != ',')
@@ -50,15 +48,13 @@ block<T>::block(std::istream& in) : expression<T>(in)
 }
 
 template<class T>
-void block<T>::output(std::ostream& os) const
-{
+void block<T>::output(std::ostream& os) const {
   BASE_::output(os);
 }
 
 template<class T>
-evaluatable<T>* block<T>::partial_evaluate_replace(const evaluator<T>& p, bool isarg)
-{
-  expression<T>::partial_evaluate(p,isarg);
+evaluatable<T>* block<T>::partial_evaluate_replace(const evaluator<T>& p) {
+  expression<T>::partial_evaluate(p);
   return this;
 }
 

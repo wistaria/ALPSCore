@@ -31,12 +31,12 @@ public:
   expression(const term<T>& e) : terms_(1,e) {}
   virtual ~expression() {}
 
-  value_type value(const evaluator<T>& = evaluator<T>(), bool=false) const;
+  value_type value(const evaluator<T>& = evaluator<T>()) const;
   value_type value(const params& p) const { return value(params_evaluator<T>(p)); }
 
-  bool can_evaluate(const evaluator<T>& = evaluator<T>(), bool=false) const;
+  bool can_evaluate(const evaluator<T>& = evaluator<T>()) const;
   bool can_evaluate(const params& p) const { return can_evaluate(params_evaluator<T>(p)); }
-  void partial_evaluate(const evaluator<T>& =evaluator<T>(), bool=false);
+  void partial_evaluate(const evaluator<T>& =evaluator<T>());
   void partial_evaluate(const params& p) { partial_evaluate(params_evaluator<T>(p)); }
 
   void output(std::ostream& os) const;
@@ -165,39 +165,39 @@ bool expression<T>::parse(std::istream& is) {
 }
 
 template<class T>
-typename expression<T>::value_type expression<T>::value(const evaluator<T>& p, bool isarg) const {
+typename expression<T>::value_type expression<T>::value(const evaluator<T>& p) const {
   if (terms_.size()==0)
     return value_type(0.);
   value_type val=terms_[0].value(p);
   for (unsigned int i=1;i<terms_.size();++i)
-    val += terms_[i].value(p,isarg);
+    val += terms_[i].value(p);
   return val;
 }
 
 template<class T>
-bool expression<T>::can_evaluate(const evaluator<T>& p, bool isarg) const {
+bool expression<T>::can_evaluate(const evaluator<T>& p) const {
   if (terms_.size()==0)
     return true;
   bool can=true;
 
   for (unsigned int i=0;i<terms_.size();++i)
-    can = can && terms_[i].can_evaluate(p,isarg);
+    can = can && terms_[i].can_evaluate(p);
   return can;
 }
 
 template<class T>
-void expression<T>::partial_evaluate(const evaluator<T>& p, bool isarg) {
-  if (can_evaluate(p,isarg))
-    (*this) = expression<T>(value(p,isarg));
+void expression<T>::partial_evaluate(const evaluator<T>& p) {
+  if (can_evaluate(p))
+    (*this) = expression<T>(value(p));
   else {
     value_type val(0);
     for (unsigned int i=0; i<terms_.size(); ++i) {
-      if (terms_[i].can_evaluate(p,isarg)) {
-        val += terms_[i].value(p,isarg);
+      if (terms_[i].can_evaluate(p)) {
+        val += terms_[i].value(p);
         terms_.erase(terms_.begin()+i);
         --i;
       } else {
-        terms_[i].partial_evaluate(p,isarg);
+        terms_[i].partial_evaluate(p);
       }
     }
     if (val != value_type(0.)) terms_.insert(terms_.begin(), term<T>(val));

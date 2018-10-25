@@ -16,54 +16,46 @@
 namespace alps {
 
 template<class T>
-inline bool can_evaluate(const expression::evaluatable<T>& ex, const expression::evaluator<T>& ev, bool isarg=false)
-{
-  return ex.can_evaluate(ev,isarg);
+inline bool can_evaluate(const expression::evaluatable<T>& ex, const expression::evaluator<T>& ev) {
+  return ex.can_evaluate(ev);
 }
 
 template<class T>
-inline bool can_evaluate(const std::string& v, const expression::evaluator<T>& p, bool isarg=false)
-{
-  return expression::expression<T>(v).can_evaluate(p,isarg);
+inline bool can_evaluate(const std::string& v, const expression::evaluator<T>& p) {
+  return expression::expression<T>(v).can_evaluate(p);
 }
 
-inline bool can_evaluate(const std::string& v, const params& p = params())
-{
-  return can_evaluate(v, expression::params_evaluator<>(p));
+inline bool can_evaluate(const std::string& v, const params& p = params()) {
+  return can_evaluate(v, expression::evaluator<>(p));
 }
 
 template<class U>
 inline bool can_evaluate(const std::string& v, const params& p, const U&) {
-  return can_evaluate(v, expression::params_evaluator<U>(p));
+  return can_evaluate(v, expression::evaluator<U>(p));
 }
 
 template<class U, class T>
-inline U evaluate(const expression::expression<T>& ex, const expression::evaluator<T>& ev = expression::evaluator<T>(), bool isarg=false)
-{
-  return expression::evaluate_helper<U>::value(ex, ev, isarg);
+inline U evaluate(const expression::expression<T>& ex, const expression::evaluator<T>& ev = expression::evaluator<T>()) {
+  return expression::evaluate_helper<U>::value(ex, ev);
 }
 
 template<class U, class T>
-inline U evaluate(const expression::term<T>& ex, const expression::evaluator<T>& ev = expression::evaluator<T>(), bool isarg=false)
-{
-  return expression::evaluate_helper<U>::value(ex, ev,isarg);
+inline U evaluate(const expression::term<T>& ex, const expression::evaluator<T>& ev = expression::evaluator<T>()) {
+  return expression::evaluate_helper<U>::value(ex, ev);
 }
 
 template<class U, class T>
-inline U evaluate(const char* v, const expression::evaluator<T>& ev, bool isarg=false)
-{
-  return expression::evaluate_helper<U>::value(expression::expression<T>(std::string(v)), ev,isarg);
+inline U evaluate(const char* v, const expression::evaluator<T>& ev) {
+  return expression::evaluate_helper<U>::value(expression::expression<T>(std::string(v)), ev);
 }
 
 template<class U, class T>
-inline U evaluate(const std::string& v, const expression::evaluator<T>& ev, bool isarg=false)
-{
-  return expression::evaluate_helper<U>::value(expression::expression<T>(v), ev,isarg);
+inline U evaluate(const std::string& v, const expression::evaluator<T>& ev) {
+  return expression::evaluate_helper<U>::value(expression::expression<T>(v), ev);
 }
 
 template<class U>
-inline U evaluate(const char* v)
-{
+inline U evaluate(const char* v) {
   return evaluate<U, U>(v, expression::evaluator<
     typename expression::evaluate_helper<U>::value_type>());
 }
@@ -73,8 +65,7 @@ inline double evaluate(const char* v) {
 }
 
 template<class U>
-inline U evaluate(const std::string& v)
-{
+inline U evaluate(const std::string& v) {
   return evaluate<U, U>(v, expression::evaluator<
     typename expression::evaluate_helper<U>::value_type>());
 }
@@ -85,10 +76,10 @@ inline double evaluate(const std::string& v) {
 
 template<class U>
 inline U evaluate(const std::string& v, const params& p) {
-  return evaluate<U, typename expression::evaluate_helper<U>::value_type>(v, expression::params_evaluator<typename expression::evaluate_helper<U>::value_type>(p));
+  return evaluate<U, typename expression::evaluate_helper<U>::value_type>(v, expression::evaluator<typename expression::evaluate_helper<U>::value_type>(p));
 }
 inline double evaluate(const std::string& v, const params& p) {
-  return evaluate<double, expression::evaluate_helper<double>::value_type>(v, expression::params_evaluator<expression::evaluate_helper<double>::value_type>(p));
+  return evaluate<double, expression::evaluate_helper<double>::value_type>(v, expression::evaluator<expression::evaluate_helper<double>::value_type>(p));
 }
 
 } // end namespace alps
