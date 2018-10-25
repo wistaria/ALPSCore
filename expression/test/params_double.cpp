@@ -16,6 +16,7 @@ public:
     p_["L"] = L;
     p_["T"] = T;
     p_["beta"] = "1/T";
+    p_["missing"] = "depends";
     p_["error"] = "error";
   }
 protected:
@@ -48,5 +49,7 @@ TEST_F(ExpressionTest, ParamsDouble) {
 }
 
 TEST_F(ExpressionTest, ParamsError) {
+  EXPECT_ANY_THROW(alps::evaluate<double>("undefined", p_));
+  EXPECT_ANY_THROW(alps::evaluate<double>("missing", p_));
   EXPECT_ANY_THROW(alps::evaluate<double>("error", p_));
 }
