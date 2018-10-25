@@ -51,14 +51,16 @@ else
     ncores=2 # FIXME: MacOS does not have nproc
 fi
 
-time make -j$ncores
+## time make -j$ncores
+(cd expression && make -j$ncores)
 
 # Run MPI tests with a slight oversubscription
 # (this might help detect timing-dependent bugs)
-time env ALPS_TEST_MPI_NPROC=$[$ncores+1] make test
-make install
+#time env ALPS_TEST_MPI_NPROC=$[$ncores+1] make test
+(cd expression && ctest -V)
+#make install
 
 # Test tutorials build
-mkdir -pv tutorials
-cd tutorials
-ALPSCore_DIR=$TRAVIS_BUILD_DIR/installed cmake $alpscore_src/tutorials -DALPS_TUTORIALS_NO_BOOST_LIBS=${no_boost_libs}
+#mkdir -pv tutorials
+#cd tutorials
+#ALPSCore_DIR=$TRAVIS_BUILD_DIR/installed cmake $alpscore_src/tutorials -DALPS_TUTORIALS_NO_BOOST_LIBS=${no_boost_libs}
