@@ -59,7 +59,7 @@ endforeach()
 # each module is defined as a cmake project in a subdirectory
 # also add to utilities/include/config.hpp.in under "Available ALPSCore components"
 set(ALPS_KNOWN_COMPONENTS)
-foreach(module_ utilities hdf5 accumulators params mc gf alea)
+foreach(module_ utilities hdf5 accumulators params expression mc gf alea)
   list(FIND ALPS_MODULES_DISABLE ${module_} disabled_index_)
   if (disabled_index_ EQUAL -1)
     add_subdirectory(${module_})
