@@ -23,23 +23,29 @@ public:
   }
 protected:
   alps::params p_;
-  double complex;
-  L T;
+  double L;
+  complex T;
 };
 
 TEST_F(ExpressionTest, ParamsComplex) {
-  EXPECT_NEAR(T, alps::evaluate<complex>("T", p_));
-  EXPECT_NEAR(L + T, alps::evaluate<complex>("L+T", p_));
-  EXPECT_NEAR(L - T, alps::evaluate<complex>("L-T", p_));
-  EXPECT_NEAR(1.0/T + 10.0, alps::evaluate<complex>("1/T+10", p_));
-  EXPECT_NEAR(L/(1.0/T+10.0), alps::evaluate<complex>("L/(1/T+10)", p_));
-  EXPECT_NEAR(1.0/T, alps::evaluate<complex>("beta", p_));
-  EXPECT_NEAR(sqrt(L), alps::evaluate<complex>("sqrt(L)", p_));
-  EXPECT_NEAR(sin(2 * M_PI / L), alps::evaluate<complex>("sin(2*Pi/L)", p_));
-  EXPECT_NEAR(cos(2 * M_PI / L), alps::evaluate<complex>("cos(2*Pi/L)", p_));
-  EXPECT_NEAR(L * L, alps::evaluate<complex>("L^2", p_));
-  EXPECT_NEAR((L+1) * (L+1) * (L+1), alps::evaluate<complex>("(L+1)^3", p_));
-  EXPECT_NEAR(1.0 / (L+1) * 5, alps::evaluate<complex>("(L+1)^-1*5", p_));
+  EXPECT_DOUBLE_EQ(real(T), real(alps::evaluate<complex>("T", p_)));
+  EXPECT_DOUBLE_EQ(imag(T), imag(alps::evaluate<complex>("T", p_)));
+  EXPECT_DOUBLE_EQ(real(L + T), real(alps::evaluate<complex>("L+T", p_)));
+  EXPECT_DOUBLE_EQ(imag(L + T), imag(alps::evaluate<complex>("L+T", p_)));
+  EXPECT_DOUBLE_EQ(real(L - T), real(alps::evaluate<complex>("L-T", p_)));
+  EXPECT_DOUBLE_EQ(imag(L - T), imag(alps::evaluate<complex>("L-T", p_)));
+  EXPECT_DOUBLE_EQ(real(1.0/T + 10.0), real(alps::evaluate<complex>("1/T+10", p_)));
+  EXPECT_DOUBLE_EQ(imag(1.0/T + 10.0), imag(alps::evaluate<complex>("1/T+10", p_)));
+  EXPECT_DOUBLE_EQ(real(L/(1.0/T+10.0)), real(alps::evaluate<complex>("L/(1/T+10)", p_)));
+  EXPECT_DOUBLE_EQ(imag(L/(1.0/T+10.0)), imag(alps::evaluate<complex>("L/(1/T+10)", p_)));
+  EXPECT_DOUBLE_EQ(real(1.0/T), real(alps::evaluate<complex>("beta", p_)));
+  EXPECT_DOUBLE_EQ(imag(1.0/T), imag(alps::evaluate<complex>("beta", p_)));
+  EXPECT_DOUBLE_EQ(sqrt(L), real(alps::evaluate<complex>("sqrt(L)", p_)));
+  EXPECT_DOUBLE_EQ(sin(2 * M_PI / L), real(alps::evaluate<complex>("sin(2*Pi/L)", p_)));
+  EXPECT_DOUBLE_EQ(cos(2 * M_PI / L), real(alps::evaluate<complex>("cos(2*Pi/L)", p_)));
+  EXPECT_DOUBLE_EQ(L * L, real(alps::evaluate<complex>("L^2", p_)));
+  EXPECT_DOUBLE_EQ((L+1) * (L+1) * (L+1), real(alps::evaluate<complex>("(L+1)^3", p_)));
+  EXPECT_DOUBLE_EQ(1.0 / (L+1) * 5, real(alps::evaluate<complex>("(L+1)^-1*5", p_)));
 }
 
 TEST_F(ExpressionTest, ParamsError) {
