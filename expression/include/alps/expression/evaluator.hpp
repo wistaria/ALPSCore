@@ -41,9 +41,10 @@ private:
 template<class T>
 bool evaluator<T>::can_evaluate(const std::string& name) const {
   if (evaluate_helper<T>::can_evaluate_symbol(name)) return true;
-  if (!parms_.defined(name) || (parms_[name].isType<std::string>() && parms_[name] == "Infinite recursion check"))
+  if (!parms_.defined(name) ||
+      (parms_[name].template isType<std::string>() && parms_[name] == "Infinite recursion check"))
     return false;
-  if (parms_[name].isType<std::string>()) {
+  if (parms_[name].template isType<std::string>()) {
     params p(parms_);
     p[name] = "Infinite recursion check"; // set illegal to avoid infinite recursion
     bool can = expression<T>(parms_[name].as<std::string>()).can_evaluate(evaluator<T>(p));
@@ -88,9 +89,9 @@ template<class T>
 typename evaluator<T>::value_type evaluator<T>::evaluate(const std::string& name) const {
   if (evaluate_helper<T>::can_evaluate_symbol(name))
     return evaluate_helper<T>::evaluate_symbol(name);
-  if (parms_[name].isType<std::string>() && parms_[name] == "Infinite recursion check")
+  if (parms_[name].template isType<std::string>() && parms_[name] == "Infinite recursion check")
     boost::throw_exception(std::runtime_error("Infinite recursion when evaluating " + name));
-  if (parms_[name].isType<std::string>()) {
+  if (parms_[name].template isType<std::string>()) {
     params p(parms_);
     p[name] = "Infinite recursion check";
     return evaluate_helper<T>::value(expression<T>(parms_[name]), evaluator<T>(p));
