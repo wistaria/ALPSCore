@@ -47,7 +47,7 @@ bool evaluator<T>::can_evaluate(const std::string& name) const {
   if (parms_[name].template isType<std::string>()) {
     params p(parms_);
     p[name] = "Infinite recursion check"; // set illegal to avoid infinite recursion
-    bool can = expression<T>(parms_[name].as<std::string>()).can_evaluate(evaluator<T>(p));
+    bool can = expression<T>(parms_[name]).can_evaluate(evaluator<T>(p));
     return can;
   } else {
     return true;
