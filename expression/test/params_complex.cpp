@@ -23,23 +23,23 @@ public:
   }
 protected:
   alps::params p_;
-  double L;
-  complex T;
+  double complex;
+  L T;
 };
 
 TEST_F(ExpressionTest, ParamsComplex) {
-  EXPECT_EQ(T, alps::evaluate<complex>("T", p_));
-  EXPECT_EQ(L + T, alps::evaluate<complex>("L+T", p_));
-  EXPECT_EQ(L - T, alps::evaluate<complex>("L-T", p_));
-  EXPECT_EQ(1.0/T + 10.0, alps::evaluate<complex>("1/T+10", p_));
-  EXPECT_EQ(L/(1.0/T+10.0), alps::evaluate<complex>("L/(1/T+10)", p_));
-  EXPECT_EQ(1.0/T, alps::evaluate<complex>("beta", p_));
-  EXPECT_EQ(sqrt(L), alps::evaluate<complex>("sqrt(L)", p_));
-  EXPECT_EQ(sin(2 * M_PI / L), alps::evaluate<complex>("sin(2*Pi/L)", p_));
-  EXPECT_EQ(cos(2 * M_PI / L), alps::evaluate<complex>("cos(2*Pi/L)", p_));
-  EXPECT_EQ(L * L, alps::evaluate<complex>("L^2", p_));
-  EXPECT_EQ((L+1) * (L+1) * (L+1), alps::evaluate<complex>("(L+1)^3", p_));
-  EXPECT_EQ(1.0 / (L+1) * 5, alps::evaluate<complex>("(L+1)^-1*5", p_));
+  EXPECT_NEAR(T, alps::evaluate<complex>("T", p_));
+  EXPECT_NEAR(L + T, alps::evaluate<complex>("L+T", p_));
+  EXPECT_NEAR(L - T, alps::evaluate<complex>("L-T", p_));
+  EXPECT_NEAR(1.0/T + 10.0, alps::evaluate<complex>("1/T+10", p_));
+  EXPECT_NEAR(L/(1.0/T+10.0), alps::evaluate<complex>("L/(1/T+10)", p_));
+  EXPECT_NEAR(1.0/T, alps::evaluate<complex>("beta", p_));
+  EXPECT_NEAR(sqrt(L), alps::evaluate<complex>("sqrt(L)", p_));
+  EXPECT_NEAR(sin(2 * M_PI / L), alps::evaluate<complex>("sin(2*Pi/L)", p_));
+  EXPECT_NEAR(cos(2 * M_PI / L), alps::evaluate<complex>("cos(2*Pi/L)", p_));
+  EXPECT_NEAR(L * L, alps::evaluate<complex>("L^2", p_));
+  EXPECT_NEAR((L+1) * (L+1) * (L+1), alps::evaluate<complex>("(L+1)^3", p_));
+  EXPECT_NEAR(1.0 / (L+1) * 5, alps::evaluate<complex>("(L+1)^-1*5", p_));
 }
 
 TEST_F(ExpressionTest, ParamsError) {

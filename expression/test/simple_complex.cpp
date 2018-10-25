@@ -10,11 +10,11 @@
 typedef std::complex<double> complex;
 
 TEST(ExpressionTest, SimpleComplex) {
-  EXPECT_EQ(complex(3), alps::evaluate<complex>("3"));
-  EXPECT_EQ(complex(2,3), alps::evaluate<complex>("2+3*I"));
-  EXPECT_EQ(complex(2,3), alps::evaluate<complex>("(2,3)"));
-  EXPECT_EQ(complex(1,2) * complex(3,4), alps::evaluate<complex>("(1,2) * (3,4)"));
-  EXPECT_EQ(2.0 / complex(0,1), alps::evaluate<complex>("2/I"));
-  EXPECT_EQ(sqrt(-complex(2)), alps::evaluate<complex>("sqrt(-2)"));
-  EXPECT_EQ(sin(complex(2,3)), alps::evaluate<complex>("sin(2+3*I)"));
+  EXPECT_NEAR(complex(3), alps::evaluate<complex>("3"));
+  EXPECT_NEAR(complex(2,3), alps::evaluate<complex>("2+3*I"));
+  EXPECT_NEAR(complex(2,3), alps::evaluate<complex>("(2,3)"));
+  EXPECT_NEAR(complex(1,2) * complex(3,4), alps::evaluate<complex>("(1,2) * (3,4)"));
+  EXPECT_NEAR(2.0 / complex(0,1), alps::evaluate<complex>("2/I"));
+  EXPECT_NEAR(sqrt(-complex(2)), alps::evaluate<complex>("sqrt(-2)"));
+  EXPECT_NEAR(sin(complex(2,3)), alps::evaluate<complex>("sin(2+3*I)"));
 }
