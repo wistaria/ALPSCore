@@ -16,8 +16,7 @@ namespace expression {
 
 template<typename U, typename T>
 struct numeric_cast_helper {
-  static U value(typename boost::call_traits<T>::param_type x)
-  {
+  static U value(typename boost::call_traits<T>::param_type x) {
     return x;
   }
 };
@@ -25,34 +24,19 @@ struct numeric_cast_helper {
 template<typename U, typename T>
 struct numeric_cast_helper<U, std::complex<T> > {
   static U value(const std::complex<T>& x) {
-    if (! numeric::is_zero(x.imag()))
+    if (!numeric::is_zero(x.imag()))
       boost::throw_exception(std::runtime_error("can not convert complex number into real one"));
     return x.real();
   }
 };
 
-#ifndef BOOST_NO_SFINAE
 template<typename U, typename T>
-U numeric_cast(T x, typename boost::enable_if<boost::is_arithmetic<T> >::type* = 0)
-{
+U numeric_cast(const T& x) {
   return numeric_cast_helper<U,T>::value(x);
 }
-template<typename U, typename T>
-U numeric_cast(const T& x, typename boost::disable_if<boost::is_arithmetic<T> >::type* = 0)
-{
-  return numeric_cast_helper<U,T>::value(x);
-}
-#else
-template<typename U, typename T>
-U numeric_cast(const T& x)
-{
-  return numeric_cast_helper<U,T>::value(x);
-}
-#endif
 
 template<class U>
-struct evaluate_helper
-{
+struct evaluate_helper {
   typedef U value_type;
   template<class R>
   static U value(const term<R>& ex, const evaluator<R>& =evaluator<R>()) { return ex; }
@@ -62,8 +46,7 @@ struct evaluate_helper
 };
 
 template<class U>
-struct evaluate_helper<expression<U> >
-{
+struct evaluate_helper<expression<U> > {
   typedef U value_type;
   static expression<U> value(const term<U>& ex, const evaluator<U>& ev=evaluator<U>()) {
     term<U> t(ex);
@@ -78,8 +61,7 @@ struct evaluate_helper<expression<U> >
 };
 
 template<>
-struct evaluate_helper<double>
-{
+struct evaluate_helper<double> {
   typedef double value_type;
   template<class R>
   static double value(const term<R>& ex, const evaluator<R>& ev=evaluator<R>()) {
@@ -102,8 +84,7 @@ struct evaluate_helper<double>
 };
 
 template<>
-struct evaluate_helper<float>
-{
+struct evaluate_helper<float> {
   typedef float value_type;
   template<class R>
   static float value(const term<R>& ex, const evaluator<R>& ev=evaluator<R>()) {
@@ -126,8 +107,7 @@ struct evaluate_helper<float>
 };
 
 template<>
-struct evaluate_helper<long double>
-{
+struct evaluate_helper<long double> {
   typedef long double value_type;
   template<class R>
   static long double value(const term<R>& ex, const evaluator<R>& ev=evaluator<R>()) {
@@ -150,8 +130,7 @@ struct evaluate_helper<long double>
 };
 
 template<class U>
-struct evaluate_helper<std::complex<U> >
-{
+struct evaluate_helper<std::complex<U> > {
   typedef std::complex<U> value_type;
   template<class R>
   static std::complex<U> value(const term<R>& ex, const evaluator<R>& ev=evaluator<R>()) {
