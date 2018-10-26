@@ -52,4 +52,5 @@ TEST_F(ExpressionTest, ParamsError) {
   EXPECT_ANY_THROW(alps::evaluate<double>("undefined", p_));
   EXPECT_ANY_THROW(alps::evaluate<double>("missing", p_));
   EXPECT_ANY_THROW(alps::evaluate<double>("error", p_));
+  EXPECT_ANY_THROW(alps::evaluate<double>("3 + 2 * I", p_));
 }

@@ -4,5 +4,4 @@
  * For use in publications, see ACKNOWLEDGE.TXT
  */
 
-#include "expression/expression.hpp"
 #include "expression/evaluate.hpp"
