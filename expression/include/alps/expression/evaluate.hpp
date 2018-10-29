@@ -15,24 +15,6 @@
 namespace alps {
 
 template<class T>
-inline bool can_evaluate(const expression::expression<T>& ex, const expression::evaluator<T>& ev) {
-  return ex.can_evaluate(ev);
-}
-
-template<class T>
-inline bool can_evaluate(const std::string& v, const expression::evaluator<T>& p) {
-  return expression::expression<T>(v).can_evaluate(p);
-}
-
-inline bool can_evaluate(const std::string& v, const params& p) {
-  return can_evaluate(v, expression::evaluator<>(p));
-}
-
-inline bool can_evaluate(const std::string& v) {
-  return can_evaluate(v, expression::evaluator<>());
-}
-
-template<class T>
 inline T evaluate(const expression::expression<T>& ex, const expression::evaluator<T>& ev) {
   return expression::evaluate_helper<T>::value(ex, ev);
 }
