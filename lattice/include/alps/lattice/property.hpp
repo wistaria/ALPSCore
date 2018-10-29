@@ -7,38 +7,20 @@
 #ifndef ALPS_LATTICE_PROPERTY_HPP
 #define ALPS_LATTICE_PROPERTY_HPP
 
-#include <vector>
-#include <boost/graph/properties.hpp>
+#include <Eigen/Dense>
+
+#ifndef LATTICE_MAX_DIM
+# define LATTICE_MAX_DIM 3
+#endif
 
 namespace alps {
 namespace lattice {
 
-typedef boost::vertex_index_t vertex_index_t;
-typedef boost::vertex_index_t site_index_t;
-typedef vertex_index_t site_index_t;
-struct vertex_type_t { typedef boost::vertex_property_tag kind; };
-typedef vertex_type_t site_type_t;
-struct coordinate_t { typedef boost::vertex_property_tag kind; };
-struct parity_t { typedef boost::vertex_property_tag kind; };
-
-typedef boost::edge_index_t edge_index_t;
-typedef boost::edge_index_t bond_index_t;
-struct edge_type_t { typedef boost::edge_property_tag kind; };
-typedef edge_type_t bond_type_t;
-struct source_offset_t { typedef boost::edge_property_tag kind; };
-struct target_offset_t { typedef boost::edge_property_tag kind; };
-struct boundary_crossing_t { typedef boost::edge_property_tag kind; };
-struct edge_vector_t { typedef boost::edge_property_tag kind; };
-typedef edge_vector_t bond_vector_t;
-struct edge_vector_relative_t { typedef boost::edge_property_tag kind; };
-typedef edge_vector_relative_t bond_vector_relative_t;
-
-struct dimension_t { typedef boost::graph_property_tag kind; };
-
-typedef std::vector<double> coordinate_type;
-typedef std::vector<int> offset_type;
-typedef std::vector<int> distance_type;
-typedef unsigned int type_type;
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, 0, LATTICE_MAX_DIM, LATTICE_MAX_DIM> basis_t; // MatrixXd
+typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, 0, LATTICE_MAX_DIM, LATTICE_MAX_DIM> span_t; // MatrixXi
+typedef Eigen::Matrix<int, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> extent_t; // VectorXi
+typedef Eigen::Matrix<double, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> coordinate_t; // VectorXd
+typedef Eigen::Matrix<int, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> offset_t; // VectorXi
 
 } // end namespace lattice
 } // end namespace alps

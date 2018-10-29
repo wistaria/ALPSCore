@@ -18,7 +18,7 @@ namespace lattice {
 struct lattice_vertex_property {
   lattice_vertex_property() : index(0), vertex_type(0), parity(0) {}
   std::size_t index;
-  coordinate_type coordinate;
+  coordinate_t coordinate;
   int vertex_type;
   unsigned int parity;
 };
@@ -26,8 +26,8 @@ struct lattice_vertex_property {
 struct lattice_edge_property {
   lattice_edge_property() : index(0), edge_type(0) {}
   std::size_t index;
-  coordinate_type bond_vector;
-  type_type edge_type;
+  coordinate_t bond_vector;
+  int edge_type;
 };
 
 struct lattice_bundle_property {

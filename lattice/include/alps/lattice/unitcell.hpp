@@ -16,19 +16,19 @@ namespace lattice {
 struct unitcell_vertex_property {
   unitcell_vertex_property() : index(0), vertex_type(0) {}
   std::size_t index;
-  coordinate_type coordinate;
+  coordinate_t coordinate;
   int vertex_type;
 };
 
 struct unitcell_edge_property {
   unitcell_edge_property() : index(0), edge_type(0) {}
   std::size_t index;
-  offset_type source_offset, target_offset;
+  offset_t target_offset;
   int edge_type;
 };
 
 struct unitcell_bundle_property {
-  std::vector<std::vector<double> > basis_vector;
+  basis_t basis_vector;
 };
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
@@ -44,19 +44,16 @@ public:
   typedef typename graph_type::vertex_descriptor vertex_descriptor;
   typedef typename graph_type::edge_descriptor edge_descriptor;
   unitcell() : graph_type() {}
-  unitcell(const std::vector<std::vector<double> >& basis) : graph_type() {
-    unsigned int dim = basis.size();
-    for (std::size_t i = 0; i < dim; ++i) {
-      if (basis[i].size() != dim)
-        throw std::invalid_argument("basis vector dimension mismatch");
-    }
+  unitcell(const basis_t& basis) : graph_type() {
+    if (basis.rows() != basis.cols())
+      throw std::invalid_argument("basis vector dimension mismatch");
     (*this)[boost::graph_bundle].basis_vector = basis;
   }
   unitcell(const graph_type& graph) : graph_type(graph) {}
-  unitcell(const unitcell& cell, const std::vector<int>& extent);
-  unitcell(const unitcell& cell, const std::vector<std::vector<int> >& supercell);
+  unitcell(const unitcell& cell, const extent_t& extent);
+  unitcell(const unitcell& cell, const span_t& span);
 
-  vertex_descriptor add_vertex(const coordinate_type& pos, int vertex_type) {
+  vertex_descriptor add_vertex(const coordinate_t& pos, int vertex_type) {
     if (pos.size() != dimension())
       throw std::invalid_argument("vertex coordinate dimension mismatch");
     for (std::size_t i = 0; i < dimension(); ++i) {
@@ -71,22 +68,20 @@ public:
   }
     
   edge_descriptor add_edge(vertex_descriptor source, vertex_descriptor target,
-                           const offset_type& source_offset, const offset_type& target_offset,
-                           int edge_type) {
+                           const offset_t& target_offset, int edge_type) {
     if (source >= num_vertices(*this) || target >= num_vertices(*this))
       throw std::invalid_argument("vertex index out of range");
-    if (source_offset.size() != dimension() || target_offset.size() != dimension())
+    if (target_offset.size() != dimension())
       throw std::invalid_argument("unitcell offset dimension mismatch");
     edge_descriptor b = std::get<0>(boost::add_edge(source, target, *this));
     (*this)[b].index = num_edges(*this) - 1;
-    (*this)[b].source_offset = source_offset;
     (*this)[b].target_offset = target_offset;
     (*this)[b].edge_type = edge_type;
     return b;
   }
 
   unsigned int dimension() const {
-    return (*this)[boost::graph_bundle].basis_vector.size();
+    return (*this)[boost::graph_bundle].basis_vector.cols();
   }
 };
 
