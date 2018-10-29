@@ -16,6 +16,7 @@ namespace alps {
 namespace lattice {
 
 struct lattice_vertex_property {
+  lattice_vertex_property() : index(0), vertex_type(0), parity(0) {}
   std::size_t index;
   coordinate_type coordinate;
   int vertex_type;
@@ -23,6 +24,7 @@ struct lattice_vertex_property {
 };
 
 struct lattice_edge_property {
+  lattice_edge_property() : index(0), edge_type(0) {}
   std::size_t index;
   coordinate_type bond_vector;
   type_type edge_type;

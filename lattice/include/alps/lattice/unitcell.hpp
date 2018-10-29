@@ -14,12 +14,14 @@ namespace alps {
 namespace lattice {
 
 struct unitcell_vertex_property {
+  unitcell_vertex_property() : index(0), vertex_type(0) {}
   std::size_t index;
   coordinate_type coordinate;
   int vertex_type;
 };
 
 struct unitcell_edge_property {
+  unitcell_edge_property() : index(0), edge_type(0) {}
   std::size_t index;
   offset_type source_offset, target_offset;
   int edge_type;
@@ -44,7 +46,7 @@ public:
   unitcell() : graph_type() {}
   unitcell(const std::vector<std::vector<double> >& basis) : graph_type() {
     unsigned int dim = basis.size();
-    for (int i = 0; i < dim; ++i) {
+    for (std::size_t i = 0; i < dim; ++i) {
       if (basis[i].size() != dim)
         throw std::invalid_argument("basis vector dimension mismatch");
     }
@@ -57,7 +59,7 @@ public:
   vertex_descriptor add_vertex(const coordinate_type& pos, int vertex_type) {
     if (pos.size() != dimension())
       throw std::invalid_argument("vertex coordinate dimension mismatch");
-    for (int i = 0; i < dimension(); ++i) {
+    for (std::size_t i = 0; i < dimension(); ++i) {
       if (pos[i] < 0 || pos[i] >= 1.0)
         throw std::invalid_argument("vertex coordinate out of range");
     }

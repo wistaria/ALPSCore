@@ -13,8 +13,6 @@ TEST(UnitcellTest, SimpleDouble) {
   basis[0] = std::vector<double>({1.0,0.0});
   basis[1] = std::vector<double>({0.0,1.0});
   alps::lattice::unitcell<> unitcell(basis);
-  std::size_t ns = 0;
-  std::size_t nb = 0;
   auto s0 = unitcell.add_vertex({0.0,0.0}, 0);
   auto b0 = unitcell.add_edge(s0, s0, {0,0}, {1,0}, 0);
   auto b1 = unitcell.add_edge(s0, s0, {0,0}, {0,1}, 0);
