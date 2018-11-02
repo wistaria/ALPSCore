@@ -17,4 +17,10 @@ TEST(ExpressionTest, SimpleDouble) {
   EXPECT_DOUBLE_EQ(2 * std::sin(M_PI/4), alps::evaluate("2 * sin(Pi/4)"));
   EXPECT_DOUBLE_EQ(1 / std::sqrt(3), alps::evaluate("1 / sqrt(3)"));
   EXPECT_DOUBLE_EQ(std::pow(3.2, 1.5), alps::evaluate("3.2^1.5"));
+  EXPECT_DOUBLE_EQ(-1, alps::evaluate("I * I"));
+}
+
+TEST(ExpressionTest, SimpleDoubleError) {
+  EXPECT_ANY_THROW(alps::evaluate("a"));
+  EXPECT_ANY_THROW(alps::evaluate("I"));
 }

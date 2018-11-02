@@ -15,31 +15,21 @@
 namespace alps {
 
 template<class T>
-inline T evaluate(const expression::expression<T>& ex, const expression::evaluator<T>& ev) {
-  return expression::evaluate_helper<T>::value(ex, ev);
+T evaluate(const std::string& v, const params& p) {
+  return expression::evaluate_helper<T>::value(expression::expression<T>(v), expression::evaluator<T>(p));
+}
+
+double evaluate(const std::string& v, const params& p) {
+  return expression::evaluate_helper<double>::value(expression::expression<std::complex<double> >(v), expression::evaluator<std::complex<double> >(p));
 }
 
 template<class T>
-inline T evaluate(const std::string& v, const expression::evaluator<T>& ev) {
-  return evaluate<T>(expression::expression<T>(v), ev);
+T evaluate(const std::string& v) {
+  return expression::evaluate_helper<T>::value(expression::expression<T>(v), expression::evaluator<T>());
 }
 
-template<class T>
-inline T evaluate(const std::string& v, const params& p) {
-  return evaluate<T>(v, expression::evaluator<T>(p));
-}
-
-inline double evaluate(const std::string& v, const params& p) {
-  return evaluate<double>(v, expression::evaluator<double>(p));
-}
-
-template<class T>
-inline T evaluate(const std::string& v) {
-  return evaluate<T>(v, expression::evaluator<T>());
-}
-
-inline double evaluate(const std::string& v) {
-  return evaluate<double>(v, expression::evaluator<double>());
+double evaluate(const std::string& v) {
+  return expression::evaluate_helper<double>::value(expression::expression<std::complex<double> >(v), expression::evaluator<std::complex<double> >());
 }
 
 } // end namespace alps
