@@ -7,20 +7,31 @@
 #ifndef ALPS_LATTICE_PROPERTY_HPP
 #define ALPS_LATTICE_PROPERTY_HPP
 
+#include <string>
 #include <Eigen/Dense>
 
 #ifndef LATTICE_MAX_DIM
-# define LATTICE_MAX_DIM 3
+# define LATTICE_MAX_DIM 4
 #endif
 
 namespace alps {
 namespace lattice {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, 0, LATTICE_MAX_DIM, LATTICE_MAX_DIM> basis_t; // MatrixXd
-typedef Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, 0, LATTICE_MAX_DIM, LATTICE_MAX_DIM> span_t; // MatrixXi
-typedef Eigen::Matrix<int, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> extent_t; // VectorXi
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> coordinate_t; // VectorXd
-typedef Eigen::Matrix<int, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> offset_t; // VectorXi
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> basis_t;
+
+// basis set that has expressions as elements
+typedef Eigen::Matrix<std::string, Eigen::Dynamic, Eigen::Dynamic> basis_expression_t;
+  
+// set of spanning vectors
+typedef Eigen::Matrix<long, Eigen::Dynamic, Eigen::Dynamic> span_t;
+
+// extent vector = diagonal spanning matrix
+typedef Eigen::Matrix<long, Eigen::Dynamic, 1> extent_t;
+
+// coordinate vector has fixed capacity for efficiency
+typedef Eigen::Matrix<double, Eigen::Dynamic, 1, 0, LATTICE_MAX_DIM, 1> coordinate_t;
+
+typedef Eigen::Matrix<long, Eigen::Dynamic, 1> offset_t;
 
 } // end namespace lattice
 } // end namespace alps
